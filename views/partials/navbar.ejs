@@ -38,10 +38,16 @@
                 </ul>
 
                 <ul class="navbar-nav justify-content-end">
+                    <a class="nav-item nav-link" href="/home/users/messages">
+                        <i class="fas fa-envelope"></i>
+                        <span class="tag is-info">3</span>
+                    </a>
+
                     <a class="nav-item nav-link" href="/home/users/<%= locals.user.id %>">
                         <%= locals.user.email %>
                         <i class="fas fa-user"></i>
                     </a>
+
                     <a class="nav-item nav-link" href="/logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </a>
