@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
         if(err) return res.status(500).send({message: "Ha habido un error en la db: " + err});
         res.render("user/profile", {friendRequests: friendRequests});
     });
+
     client.end();
 });
 

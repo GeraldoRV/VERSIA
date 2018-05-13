@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Versia - Mis mensajes</title>
+    <% include ../partials/resources.ejs %>
+</head>
+<body>
+<% include ../partials/navbar.ejs %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <% include ../partials/menu-user.ejs %>
+        </div>
+
+        <div class="col-5">
+            <h4>Mensajes recibidos</h4>
+            <hr>
+
+            <div class="accordion">
+                <% for(var i = 0; i < messages.length; i++) { %>
+                <div class="card">
+                    <div id="h<%= messages[i].id %>" class="card-header">
+                        <h5 class="mb-0">
+                            <img class="rounded-circle" src="https://picsum.photos/g/40/40" alt="...">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#<%= messages[i].id %>"
+                                    aria-expanded="true" aria-controls="<%= messages[i].id %>">
+                                <%= messages[i].name %>
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="<%= messages[i].id %>" class="collapse" aria-labelledby="h<%= messages[i].id %>"
+                         data-parent="#accordion">
+                        <div class="card-body">
+                            <p><%= messages[i].content %></p>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#messageModal"
+                                    onclick="">
+                                <i class="fas fa-envelope"></i></button>
+                            <button class="btn btn-success">¡Devuelvele un mensaje!</button>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+
+        <div class="col-4">
+            <% include ../partials/menu-friends.ejs %>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="messageModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Enviar mensaje a: <p id="receiverEmailTitle"></p></h4>
+                <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="senderEmail">De (yo):</label>
+                    <input type="email" class="form-control"
+                           id="senderEmail" name="senderEmail" readonly/>
+                </div>
+
+                <div class="form-group">
+                    <label for="receiverEmail">Enviar a:</label>
+                    <input type="email" class="form-control"
+                           id="receiverEmail" name="receiverEmail" readonly/>
+                </div>
+
+                <div class="form-group">
+                    <label for="messageContent">Mensaje</label>
+                    <textarea class="form-control" id="messageContent" rows="9" autofocus></textarea>
+                </div>
+
+                <button class="btn btn-default btn-success float-right" onclick="sendEmail()">Enviar!</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

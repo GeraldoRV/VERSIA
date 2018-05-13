@@ -4,21 +4,35 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
     var client = require('../db/db');
 
+    var profile = {};
+    client.query('SELECT * FROM profiles WHERE user_id=:user_id', {user_id: req.params.id}, function(err, profileResult) {
+        if(err) res.status(500).send({message: "Ha habido un error en la db: " + err});
+        profile = profileResult[0];
+    });
+
+    var friends = {};
+    client.query("SELECT * FROM profiles WHERE user_id IN " +
+        "(SELECT sender FROM friends WHERE receiver=:user AND friend_request=1 UNION ALL SELECT receiver FROM friends WHERE sender=:user AND friend_request=1)",
+        {user: req.params.id}, function(err, friendsRows) {
+            if(err) console.log(err);
+            friends = friendsRows;
+        });
+
+    var groups = {};
+    client.query("SELECT name FROM groups WHERE id IN " +
+        "(SELECT `group`FROM group_members WHERE `member`=:member AND group_request=1)", {member: req.user.id}, function(err, groupsRows) {
+        if(err) return res.status(500).send({message: "Ha habido un error en la db" + err});
+        else groups = groupsRows;
+    });
+
     client.query("SELECT messages.id, profiles.name, profiles.surname, content \n" +
-        "FROM messages\n" +
-        "INNER JOIN profiles ON profiles.id=sender\n" +
-        "WHERE receiver=:user " +
-        "ORDER BY id ASC",
+        "FROM messages \n" +
+        "INNER JOIN profiles ON profiles.id=sender \n" +
+        "WHERE receiver=3 ORDER BY id DESC",
         {user: req.user.id},
-        function(err, messagesRows) {
+        function(err, messages) {
             if(err) res.status(500).send('Error. La hemos cagado en algo...');
-            var messages = {};
-            messagesRows.forEach(function(message) {
-                if(!messages[message.name])
-                    messages[message.name] = [];
-                messages[message.name].push(message);
-            });
-            res.send(messages);
+            res.render('user/messages', {profile: profile, friends: friends, groups: groups, messages: messages});
         });
 
     client.end();
